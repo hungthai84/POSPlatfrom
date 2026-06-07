@@ -1,0 +1,188 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net (Default-Deny Catch-All)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- REUSABLE SECURITY PRIMITIVES & IDENTITY HELPER FUNCTIONS ---
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    // Check if the current user matches our bootstrapped administrator email or has manual admin document
+    function isAdmin() {
+      return isVerified() && (
+        request.auth.token.email == "hungthai84@gmail.com" ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Prevent Resource Poisoning on ID path parameters
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- DOMAIN VALIDATION BLUEPRINTS (THE ANTI-UPDATE-GAP) ---
+
+    function isValidProduct(p) {
+      return p.keys().hasAll(['id', 'sku', 'name', 'category', 'variants', 'isActive', 'totalImport', 'totalAvailable', 'totalShipping'])
+        && p.keys().size() <= 12 // allows description and videoUrl optionals but bounds overall size
+        && p.id is string && p.id.size() <= 128
+        && p.sku is string && p.sku.size() <= 64
+        && p.name is string && p.name.size() <= 256
+        && p.category is string && p.category.size() <= 128
+        && p.variants is list
+        && p.isActive is bool
+        && p.totalImport is int && p.totalImport >= 0
+        && p.totalAvailable is int && p.totalAvailable >= 0
+        && p.totalShipping is int && p.totalShipping >= 0;
+    }
+
+    function isValidCustomer(c) {
+      return c.keys().hasAll(['id', 'name', 'phone', 'type', 'totalSpent', 'orderCount', 'createdAt'])
+        && c.keys().size() <= 9 // allows optional email and address
+        && c.id is string && c.id.size() <= 128
+        && c.name is string && c.name.size() <= 256
+        && c.phone is string && c.phone.size() <= 32
+        && c.type is string && (c.type == 'regular' || c.type == 'vip' || c.type == 'wholesale')
+        && (c.totalSpent is int || c.totalSpent is float) && c.totalSpent >= 0
+        && c.orderCount is int && c.orderCount >= 0
+        && c.createdAt is string;
+    }
+
+    function isValidOrder(o) {
+      return o.keys().hasAll(['id', 'items', 'totalAmount', 'discount', 'tax', 'finalAmount', 'paymentMethod', 'status', 'createdAt'])
+        && o.keys().size() <= 11 // allows optional customer and notes
+        && o.id is string && o.id.size() <= 128
+        && o.items is list && o.items.size() > 0
+        && (o.totalAmount is int || o.totalAmount is float) && o.totalAmount >= 0
+        && (o.discount is int || o.discount is float) && o.discount >= 0
+        && (o.tax is int || o.tax is float) && o.tax >= 0
+        && (o.finalAmount is int || o.finalAmount is float) && o.finalAmount >= 0
+        && o.paymentMethod is string && (o.paymentMethod == 'cash' || o.paymentMethod == 'card' || o.paymentMethod == 'bank_transfer' || o.paymentMethod == 'e_wallet')
+        && o.status is string && (o.status == 'pending' || o.status == 'processing' || o.status == 'completed' || o.status == 'canceled')
+        && o.createdAt is string;
+    }
+
+    function isValidShopConfig(sc) {
+      return sc.keys().hasAll(['name', 'phone', 'address', 'email', 'currency', 'taxRate'])
+        && sc.keys().size() == 6
+        && sc.name is string && sc.name.size() <= 256
+        && sc.phone is string && sc.phone.size() <= 32
+        && sc.address is string && sc.address.size() <= 512
+        && sc.email is string && sc.email.size() <= 256
+        && sc.currency is string && sc.currency.size() <= 16
+        && (sc.taxRate is int || sc.taxRate is float) && sc.taxRate >= 0 && sc.taxRate <= 1;
+    }
+
+
+    // --- COLLECTIONS SECURITY WORKFLOW ROUTINGS ---
+
+    // 1. Products Pathway
+    match /products/{productId} {
+      allow read: if isSignedIn();
+      
+      allow create: if isVerified() 
+        && isValidId(productId) 
+        && productId == incoming().id
+        && isValidProduct(incoming());
+
+      allow update: if isVerified()
+        && isValidId(productId)
+        && productId == incoming().id
+        && isValidProduct(incoming())
+        && (
+          isAdmin() || 
+          // Check for structural immutability of crucial keys
+          (incoming().id == existing().id && incoming().sku == existing().sku)
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    // 2. Customers Pathway
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+
+      allow create: if isVerified()
+        && isValidId(customerId)
+        && customerId == incoming().id
+        && isValidCustomer(incoming());
+
+      allow update: if isVerified()
+        && isValidId(customerId)
+        && customerId == incoming().id
+        && isValidCustomer(incoming())
+        && (incoming().id == existing().id);
+
+      allow delete: if isAdmin();
+    }
+
+    // 3. Orders Pathway
+    match /orders/{orderId} {
+      // Secure list queries
+      allow list: if isSignedIn();
+      allow get: if isSignedIn();
+
+      allow create: if isVerified()
+        && isValidId(orderId)
+        && orderId == incoming().id
+        && isValidOrder(incoming());
+
+      // Named Action Tiers for Order updates and state terminal locks
+      allow update: if isVerified()
+        && isValidId(orderId)
+        && orderId == incoming().id
+        && isValidOrder(incoming())
+        // Terminal state lock verification: if status was completed or canceled, cannot decrease or rewrite further unless Admin bypasses
+        && (
+          isAdmin() ||
+          (
+            existing().status != 'completed' && existing().status != 'canceled' &&
+            // Immutable properties must be locked down
+            incoming().id == existing().id &&
+            incoming().createdAt == existing().createdAt
+          )
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    // 4. Shop Config Pathway
+    match /config/shop {
+      allow read: if isSignedIn();
+      
+      // Creating or updating the shop configuration requires administrator validation
+      allow create, update: if isAdmin() && isValidShopConfig(incoming());
+      allow delete: if false; // Config document holds central settings and is persistent
+    }
+
+    // 5. Test Connection Pathway
+    match /test/connection {
+      allow read: if isSignedIn();
+    }
+
+    // Supporting admin check registry
+    match /admins/{uid} {
+      allow read: if isSignedIn();
+      allow write: if false; // strictly managed via backend or console commands
+    }
+
+  }
+}

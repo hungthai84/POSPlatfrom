@@ -1,0 +1,92 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Product in the shop inventory",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sku": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "image": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "variants": { "type": "array" },
+        "isActive": { "type": "boolean" },
+        "description": { "type": "string" },
+        "totalImport": { "type": "number" },
+        "totalAvailable": { "type": "number" },
+        "totalShipping": { "type": "number" }
+      },
+      "required": ["id", "sku", "name", "category", "variants", "isActive", "totalImport", "totalAvailable", "totalShipping"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer registry info and statistics",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "type": { "type": "string", "enum": ["regular", "vip", "wholesale"] },
+        "totalSpent": { "type": "number" },
+        "orderCount": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "phone", "type", "totalSpent", "orderCount", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A purchase order containing items bought, totals and status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customer": { "type": "object" },
+        "items": { "type": "array" },
+        "totalAmount": { "type": "number" },
+        "discount": { "type": "number" },
+        "tax": { "type": "number" },
+        "finalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "card", "bank_transfer", "e_wallet"] },
+        "status": { "type": "string", "enum": ["pending", "processing", "completed", "canceled"] },
+        "createdAt": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "items", "totalAmount", "discount", "tax", "finalAmount", "paymentMethod", "status", "createdAt"]
+    },
+    "ShopConfig": {
+      "title": "ShopConfig",
+      "description": "General settings configuration of the shop",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "email": { "type": "string" },
+        "currency": { "type": "string" },
+        "taxRate": { "type": "number" }
+      },
+      "required": ["name", "phone", "address", "email", "currency", "taxRate"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of products in store inventory"
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Collection of customer information"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Collection of purchase transactions"
+    },
+    "/config/shop": {
+      "schema": "ShopConfig",
+      "description": "Single document holding general configurations for Lark POS"
+    }
+  }
+}
