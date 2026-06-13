@@ -19,7 +19,8 @@ import {
   Package,
   Users,
   Search,
-  Users2
+  Users2,
+  AlertTriangle
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { Product, Order, Customer, ShopConfig } from '../types';
@@ -70,6 +71,27 @@ export default function Overview({
     ];
   }, []);
 
+  const lowInventoryItems = useMemo(() => {
+    const items: { productId: string; variantId: string; productName: string; variantName: string; sku: string; available: number; price: number; image: string }[] = [];
+    products.forEach(p => {
+      p.variants.forEach(v => {
+        if (v.available < 5) {
+          items.push({
+            productId: p.id,
+            variantId: v.id,
+            productName: p.name,
+            variantName: v.name,
+            sku: v.sku,
+            available: v.available,
+            price: v.price,
+            image: p.image
+          });
+        }
+      });
+    });
+    return items.sort((a,b) => a.available - b.available);
+  }, [products]);
+
   return (
     <div className="space-y-4 bg-transparent min-h-screen pb-10 select-none font-sans" id="overview-dashboard">
       
@@ -108,6 +130,31 @@ export default function Overview({
 
       <div className="px-5 space-y-4">
         {/* Filter Toolbar */}
+        {lowInventoryItems.length > 0 && (
+          <div className="bg-red-50/80 border border-red-200/60 rounded-xl p-4 flex items-center justify-between shadow-sm animate-fade-in relative overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500" />
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 shrink-0">
+                <AlertTriangle size={20} strokeWidth={2.5} />
+              </div>
+              <div>
+                <h4 className="font-bold text-red-800 text-[15px]">Cảnh báo tồn kho thấp</h4>
+                <p className="text-[13px] text-red-600/90 mt-0.5">
+                  Bạn có <strong>{lowInventoryItems.length}</strong> sản phẩm đang có số lượng tồn kho dưới mức an toàn (dưới 5 sản phẩm). Vui lòng kiểm tra báo cáo phía dưới và tiến hành nhập hàng để đảm bảo hoạt động kinh doanh.
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={() => {
+                document.getElementById('low-inventory-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="bg-white border border-red-200 text-red-600 font-bold px-4 py-2 rounded-lg text-xs hover:bg-red-50 transition shrink-0 shadow-sm"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center justify-between gap-4 glass-card p-3 rounded-xl border border-white/40">
           <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
             <div className="flex items-center gap-2">
@@ -420,6 +467,62 @@ export default function Overview({
                     <p className="text-[14px] font-bold text-slate-800">0</p>
                  </div>
               </div>
+           </div>
+        </div>
+
+        {/* Low Inventory Alert Row */}
+        <div id="low-inventory-section" className="glass-card rounded-xl border border-white/40 p-0 shadow-xl overflow-hidden mt-5 mb-5">
+           <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                 <div className="w-8 h-8 rounded-md bg-red-50 text-red-500 flex items-center justify-center border border-red-100">
+                    <AlertTriangle size={18} />
+                 </div>
+                 <h4 className="font-bold text-slate-800 text-[15px]">Cảnh báo tồn kho thấp {'<'} 5</h4>
+              </div>
+              <span className="bg-red-100 text-red-600 px-2.5 py-1 rounded-full text-[11px] font-bold">{lowInventoryItems.length} mẫu mã sắp hết hàng</span>
+           </div>
+           <div className="overflow-x-auto max-h-[300px] scrollbar-thin">
+              <table className="w-full text-left relative">
+                 <thead className="bg-[#e9eff6] sticky top-0 z-10 shadow-sm border-b border-slate-200">
+                    <tr className="text-[12px] font-bold text-slate-600">
+                       <th className="px-4 py-3">Sản phẩm</th>
+                       <th className="px-4 py-3 whitespace-nowrap">Mã SKU</th>
+                       <th className="px-4 py-3 whitespace-nowrap text-right">Tồn kho còn lại</th>
+                       <th className="px-4 py-3 whitespace-nowrap text-right">Đơn giá</th>
+                    </tr>
+                 </thead>
+                 <tbody>
+                    {lowInventoryItems.length === 0 ? (
+                      <tr>
+                         <td colSpan={4} className="py-12 text-center text-slate-500 flex flex-col items-center justify-center w-full">
+                           <Package size={32} className="text-slate-300 mb-2" />
+                           <span className="text-sm">Tất cả sản phẩm đều đủ hàng.</span>
+                         </td>
+                      </tr>
+                    ) : (
+                      lowInventoryItems.map(item => (
+                        <tr key={`${item.productId}-${item.variantId}`} className="border-b border-slate-50 hover:bg-slate-50/50 transition">
+                           <td className="px-4 py-2.5">
+                             <div className="flex items-center gap-3">
+                                <img src={item.image} alt={item.productName} className="w-9 h-9 flex-shrink-0 rounded-lg object-cover border border-slate-200 bg-white" />
+                                <div>
+                                   <p className="text-[13px] font-bold text-slate-800 line-clamp-1">{item.productName}</p>
+                                   <p className="text-[11px] text-slate-500 font-medium">{item.variantName}</p>
+                                </div>
+                             </div>
+                           </td>
+                           <td className="px-4 py-2.5 text-[12px] font-mono text-slate-500">{item.sku}</td>
+                           <td className="px-4 py-2.5 text-[13px] font-bold text-right">
+                             <span className={item.available === 0 ? 'text-red-600 bg-red-100 px-2.5 py-0.5 rounded-md border border-red-200 inline-block min-w-[32px] text-center' : 'text-orange-600 bg-orange-100 px-2.5 py-0.5 rounded-md border border-orange-200 inline-block min-w-[32px] text-center'}>
+                               {item.available}
+                             </span>
+                           </td>
+                           <td className="px-4 py-2.5 text-[13px] font-semibold text-slate-700 text-right">{formatCurrency(item.price)}</td>
+                        </tr>
+                      ))
+                    )}
+                 </tbody>
+              </table>
            </div>
         </div>
 

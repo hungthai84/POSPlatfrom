@@ -68,7 +68,7 @@ service cloud.firestore {
 
     function isValidOrder(o) {
       return o.keys().hasAll(['id', 'items', 'totalAmount', 'discount', 'tax', 'finalAmount', 'paymentMethod', 'status', 'createdAt'])
-        && o.keys().size() <= 11 // allows optional customer and notes
+        && o.keys().size() <= 24
         && o.id is string && o.id.size() <= 128
         && o.items is list && o.items.size() > 0
         && (o.totalAmount is int || o.totalAmount is float) && o.totalAmount >= 0
@@ -77,18 +77,32 @@ service cloud.firestore {
         && (o.finalAmount is int || o.finalAmount is float) && o.finalAmount >= 0
         && o.paymentMethod is string && (o.paymentMethod == 'cash' || o.paymentMethod == 'card' || o.paymentMethod == 'bank_transfer' || o.paymentMethod == 'e_wallet')
         && o.status is string && (o.status == 'pending' || o.status == 'processing' || o.status == 'completed' || o.status == 'canceled')
-        && o.createdAt is string;
+        && o.createdAt is string
+        && (!o.keys().hasAny(['shippingFee']) || (o.shippingFee is int || o.shippingFee is float))
+        && (!o.keys().hasAny(['surcharge']) || (o.surcharge is int || o.surcharge is float))
+        && (!o.keys().hasAny(['notes']) || (o.notes is string && o.notes.size() <= 1024))
+        && (!o.keys().hasAny(['internalNotes']) || (o.internalNotes is string && o.internalNotes.size() <= 1024))
+        && (!o.keys().hasAny(['staffHandling']) || (o.staffHandling is string && o.staffHandling.size() <= 128))
+        && (!o.keys().hasAny(['staffCaring']) || (o.staffCaring is string && o.staffCaring.size() <= 128))
+        && (!o.keys().hasAny(['marketer']) || (o.marketer is string && o.marketer.size() <= 128))
+        && (!o.keys().hasAny(['recipientName']) || (o.recipientName is string && o.recipientName.size() <= 128))
+        && (!o.keys().hasAny(['recipientPhone']) || (o.recipientPhone is string && o.recipientPhone.size() <= 32))
+        && (!o.keys().hasAny(['recipientAddress']) || (o.recipientAddress is string && o.recipientAddress.size() <= 512))
+        && (!o.keys().hasAny(['expectedDeliveryDate']) || (o.expectedDeliveryDate is string && o.expectedDeliveryDate.size() <= 128))
+        && (!o.keys().hasAny(['tags']) || o.tags is list);
     }
 
     function isValidShopConfig(sc) {
       return sc.keys().hasAll(['name', 'phone', 'address', 'email', 'currency', 'taxRate'])
-        && sc.keys().size() == 6
+        && sc.keys().size() <= 8
         && sc.name is string && sc.name.size() <= 256
         && sc.phone is string && sc.phone.size() <= 32
         && sc.address is string && sc.address.size() <= 512
         && sc.email is string && sc.email.size() <= 256
         && sc.currency is string && sc.currency.size() <= 16
-        && (sc.taxRate is int || sc.taxRate is float) && sc.taxRate >= 0 && sc.taxRate <= 1;
+        && (sc.taxRate is int || sc.taxRate is float) && sc.taxRate >= 0 && sc.taxRate <= 1
+        && (!sc.keys().hasAny(['lowStockThreshold']) || (sc.lowStockThreshold is int || sc.lowStockThreshold is float))
+        && (!sc.keys().hasAny(['logoUrl']) || (sc.logoUrl is string && sc.logoUrl.size() <= 2048));
     }
 
 

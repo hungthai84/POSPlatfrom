@@ -345,13 +345,182 @@ export const INITIAL_ORDERS: Order[] = [
   }
 ];
 
+export const INITIAL_RETURNS: any[] = [
+  {
+    id: 'RET-1002',
+    orderId: 'DH-10002',
+    customer: INITIAL_CUSTOMERS[1],
+    items: [
+      {
+        productId: 'p-1',
+        variantId: 'v-1-1',
+        productName: 'Giày Bóng Rổ Nam Chính Hãng',
+        variantName: 'Giày Bóng Rổ Lark - Trắng / 42',
+        sku: '000001-W-42',
+        price: 1200000,
+        quantity: 1
+      }
+    ],
+    refundAmount: 1200000,
+    reason: 'Sản phẩm giao lỗi size',
+    status: 'pending',
+    createdAt: '2026-06-12T09:30:00Z',
+    notes: 'Khách hàng gửi hình ảnh qua Zalo'
+  }
+];
+
+export const INITIAL_ADS: any[] = [
+  {
+    id: 'AD-FB-1',
+    name: 'Chiến dịch Mùa Hè - FB',
+    platform: 'facebook',
+    status: 'active',
+    budget: 5000000,
+    spent: 1200000,
+    impressions: 45000,
+    clicks: 1200,
+    conversions: 24,
+    startDate: '2026-06-01T00:00:00Z',
+  },
+  {
+    id: 'AD-GG-1',
+    name: 'Tìm kiếm Giày Thể Thao - GG',
+    platform: 'google',
+    status: 'active',
+    budget: 8000000,
+    spent: 2500000,
+    impressions: 15000,
+    clicks: 850,
+    conversions: 45,
+    startDate: '2026-06-05T00:00:00Z',
+  },
+  {
+    id: 'AD-TK-1',
+    name: 'Video Viral Mới - TikTok',
+    platform: 'tiktok',
+    status: 'paused',
+    budget: 3000000,
+    spent: 3000000,
+    impressions: 120000,
+    clicks: 3500,
+    conversions: 15,
+    startDate: '2026-05-20T00:00:00Z',
+    endDate: '2026-06-05T00:00:00Z',
+  }
+];
+
+export const INITIAL_COMBOS: any[] = [
+  {
+    id: 'cb-1',
+    name: 'Combo Mùa Hè Năng Động',
+    sku: 'CB-SUMMER-01',
+    price: 1500000,
+    originalPrice: 1730000,
+    isActive: true,
+    description: 'Bao gồm 1 Áo thun, 1 Quần jean và 1 Balo du lịch.',
+    items: [
+      { productId: 'p-1', variantId: 'v-1-1', quantity: 1 },
+      { productId: 'p-2', variantId: 'v-2-1', quantity: 1 },
+      { productId: 'p-4', variantId: 'v-4-1', quantity: 1 }
+    ]
+  }
+];
+
+export const INITIAL_SUPPLIERS: any[] = [
+  {
+    id: 'sup-1',
+    name: 'Xưởng May Hà Nội',
+    code: 'NCC-HN-001',
+    phone: '0243123456',
+    email: 'contact@xuongmayhanoi.vn',
+    address: 'KCN Sài Đồng, Long Biên, Hà Nội',
+    taxCode: '0101234567',
+    category: 'May mặc',
+    debt: 15000000,
+    isActive: true,
+    createdAt: '2026-01-10T08:00:00Z',
+    notes: 'Nhà cung cấp áo thun chủ lực'
+  },
+  {
+    id: 'sup-2',
+    name: 'Tổng kho Gia dụng Minh Phát',
+    code: 'NCC-MP-002',
+    phone: '0283987654',
+    email: 'sales@giadungminhphat.com',
+    address: '456 Kinh Dương Vương, Quận 6, TP.HCM',
+    taxCode: '0309876543',
+    category: 'Gia dụng',
+    debt: 0,
+    isActive: true,
+    createdAt: '2026-02-15T10:00:00Z'
+  }
+];
+
+export const INITIAL_LIVESTREAMS: any[] = [
+  {
+    id: 'live-1',
+    title: 'Xả hàng Hè 2026 - Giảm 50%',
+    platform: 'facebook',
+    status: 'live',
+    viewers: 1250,
+    startTime: new Date().toISOString(),
+    totalOrders: 45,
+    revenue: 12500000,
+    keywords: ['HN01', 'HN02', 'VAY01'],
+    comments: [
+      { id: 'c1', userId: 'u1', userName: 'Nguyễn Văn A', content: 'Chốt HN01 size L ạ', timestamp: new Date().toISOString(), isOrder: true, status: 'pending' },
+      { id: 'c2', userId: 'u2', userName: 'Trần Thị B', content: 'Có size cho 60kg không shop?', timestamp: new Date().toISOString(), isOrder: false },
+      { id: 'c3', userId: 'u3', userName: 'Minh Khôi', content: 'VAY01 màu xanh nha', timestamp: new Date().toISOString(), isOrder: true, status: 'converted' }
+    ]
+  },
+  {
+    id: 'live-2',
+    title: 'Tiktok Shop Flash Sale',
+    platform: 'tiktok',
+    status: 'ended',
+    viewers: 8500,
+    startTime: '2026-06-12T20:00:00Z',
+    endTime: '2026-06-12T22:30:00Z',
+    totalOrders: 210,
+    revenue: 58000000,
+    keywords: ['SKINCARE', 'COMBO01'],
+    comments: []
+  }
+];
+
+export const INITIAL_INVOICES: any[] = [
+  { id: 'INV-001', orderId: 'ORD-1001', customerName: 'Nguyễn Văn An', amount: 450000, status: 'unpaid', dueDate: '2026-06-20T17:00:00Z', createdAt: '2026-06-13T10:00:00Z' },
+  { id: 'INV-002', orderId: 'ORD-1002', customerName: 'Trần Thị Bích', amount: 1200000, status: 'paid', dueDate: '2026-06-15T17:00:00Z', createdAt: '2026-06-12T09:00:00Z' }
+];
+
+export const INITIAL_CASHFLOW: any[] = [
+  { id: 'CF-001', type: 'income', category: 'Bán hàng', amount: 5000000, note: 'Doanh thu trong ngày', date: '2026-06-13T08:00:00Z' },
+  { id: 'CF-002', type: 'expense', category: 'Nhập hàng', amount: 2000000, note: 'Nhập thêm 100 áo thun', date: '2026-06-13T09:30:00Z' }
+];
+
+export const INITIAL_DEBTS: any[] = [
+  { id: 'DB-001', targetId: 'cust-1', targetName: 'Nguyễn Văn An', type: 'customer', amount: 450000, lastUpdated: '2026-06-13T10:00:00Z', status: 'warning' },
+  { id: 'DB-002', targetId: 'sup-1', targetName: 'Xưởng May Hà Nội', type: 'supplier', amount: 15000000, lastUpdated: '2026-06-10T08:00:00Z', status: 'urgent' }
+];
+
+export const INITIAL_TRANSACTIONS: any[] = [
+  { id: 'TX-001', type: 'payment', amount: 1200000, method: 'bank', status: 'success', date: '2026-06-12T15:00:00Z', referenceId: 'INV-002' },
+  { id: 'TX-002', type: 'refund', amount: 200000, method: 'cash', status: 'success', date: '2026-06-11T10:00:00Z' }
+];
+
+export const INITIAL_CALLS: any[] = [
+  { id: 'CAL-001', customerName: 'Lê Minh Tâm', phone: '0912123456', reason: 'Tư vấn combo Hè', scheduledAt: '2026-06-14T09:00:00Z', status: 'pending', notes: 'Khách quan tâm đồ gia dụng' },
+  { id: 'CAL-002', customerName: 'Hoàng Oanh', phone: '0988777666', reason: 'Chăm sóc sau mua', scheduledAt: '2026-06-13T14:30:00Z', status: 'completed' }
+];
+
 export const DEFAULT_CONFIG: ShopConfig = {
   name: 'Lark Shop',
   phone: '0987 654 321',
   address: 'Tòa nhà Lark, 15 Tố Hữu, Nam Từ Liêm, Hà Nội',
   email: 'lienhe@larkshop.vn',
   currency: 'đ',
-  taxRate: 0.10 // 10% VAT
+  taxRate: 0.10, // 10% VAT
+  lowStockThreshold: 5
 };
 
 export function getStoredData<T>(key: string, defaultValue: T): T {

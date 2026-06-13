@@ -8,11 +8,21 @@ import {
   INITIAL_PRODUCTS,
   INITIAL_CUSTOMERS,
   INITIAL_ORDERS,
+  INITIAL_RETURNS,
+  INITIAL_ADS,
+  INITIAL_COMBOS,
+  INITIAL_SUPPLIERS,
+  INITIAL_LIVESTREAMS,
+  INITIAL_INVOICES,
+  INITIAL_CASHFLOW,
+  INITIAL_DEBTS,
+  INITIAL_TRANSACTIONS,
+  INITIAL_CALLS,
   DEFAULT_CONFIG,
   getStoredData,
   setStoredData
 } from './data';
-import { Product, Order, Customer, ShopConfig } from './types';
+import { Product, Order, Customer, ShopConfig, ReturnRequest, AdCampaign, Combo, Supplier, LivestreamSession, Invoice, CashFlow as CashFlowType, Debt, Transaction, CallAppointment } from './types';
 
 // Firebase Integrations
 import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, User } from 'firebase/auth';
@@ -24,12 +34,25 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Overview from './components/Overview';
 import POSSales from './components/POSSales';
+import POSReturn from './components/POSReturn';
 import Orders from './components/Orders';
+import Returns from './components/Returns';
+import Ads from './components/Ads';
 import Products from './components/Products';
 import Customers from './components/Customers';
 import Analytics from './components/Analytics';
 import Settings from './components/Settings';
 import WebsiteBuilder from './components/WebsiteBuilder';
+import Reconciliation from './components/Reconciliation';
+import Promotions from './components/Promotions';
+import Combos from './components/Combos';
+import Suppliers from './components/Suppliers';
+import Livestream from './components/Livestream';
+import Invoices from './components/Invoices';
+import CashFlow from './components/CashFlow';
+import DebtManagement from './components/DebtManagement';
+import Transactions from './components/Transactions';
+import Appointments from './components/Appointments';
 
 export default function App() {
   // Navigation & UI Layout State
@@ -52,6 +75,46 @@ export default function App() {
 
   const [orders, setOrders] = useState<Order[]>(() =>
     getStoredData<Order[]>('lark_pos_orders', INITIAL_ORDERS)
+  );
+
+  const [returns, setReturns] = useState<ReturnRequest[]>(() =>
+    getStoredData<ReturnRequest[]>('lark_pos_returns', INITIAL_RETURNS)
+  );
+
+  const [adsData, setAdsData] = useState<AdCampaign[]>(() =>
+    getStoredData<AdCampaign[]>('lark_pos_ads', INITIAL_ADS)
+  );
+
+  const [combos, setCombos] = useState<Combo[]>(() =>
+    getStoredData<Combo[]>('lark_pos_combos', INITIAL_COMBOS)
+  );
+
+  const [suppliers, setSuppliers] = useState<Supplier[]>(() =>
+    getStoredData<Supplier[]>('lark_pos_suppliers', INITIAL_SUPPLIERS)
+  );
+
+  const [livestreams, setLivestreams] = useState<LivestreamSession[]>(() =>
+    getStoredData<LivestreamSession[]>('lark_pos_livestreams', INITIAL_LIVESTREAMS)
+  );
+
+  const [invoices, setInvoices] = useState<Invoice[]>(() =>
+    getStoredData<Invoice[]>('lark_pos_invoices', INITIAL_INVOICES)
+  );
+
+  const [cashflows, setCashflows] = useState<CashFlowType[]>(() =>
+    getStoredData<CashFlowType[]>('lark_pos_cashflow', INITIAL_CASHFLOW)
+  );
+
+  const [debts, setDebts] = useState<Debt[]>(() =>
+    getStoredData<Debt[]>('lark_pos_debts', INITIAL_DEBTS)
+  );
+
+  const [transactions, setTransactions] = useState<Transaction[]>(() =>
+    getStoredData<Transaction[]>('lark_pos_transactions', INITIAL_TRANSACTIONS)
+  );
+
+  const [appointments, setAppointments] = useState<CallAppointment[]>(() =>
+    getStoredData<CallAppointment[]>('lark_pos_appointments', INITIAL_CALLS)
   );
 
   // Firebase Authentication & Sync Tracking State
@@ -198,6 +261,46 @@ export default function App() {
   useEffect(() => {
     setStoredData('lark_pos_orders', orders);
   }, [orders]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_returns', returns);
+  }, [returns]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_ads', adsData);
+  }, [adsData]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_combos', combos);
+  }, [combos]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_suppliers', suppliers);
+  }, [suppliers]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_livestreams', livestreams);
+  }, [livestreams]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_invoices', invoices);
+  }, [invoices]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_cashflow', cashflows);
+  }, [cashflows]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_debts', debts);
+  }, [debts]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_transactions', transactions);
+  }, [transactions]);
+
+  useEffect(() => {
+    setStoredData('lark_pos_appointments', appointments);
+  }, [appointments]);
 
   // Synchronized state mutations
   // 1. Adding a new Order (Atomic batch submission with stocks reduction and loyalty scoring)
@@ -599,8 +702,59 @@ export default function App() {
       setProducts(INITIAL_PRODUCTS);
       setCustomers(INITIAL_CUSTOMERS);
       setOrders(INITIAL_ORDERS);
+      setReturns(INITIAL_RETURNS);
+      setAdsData(INITIAL_ADS);
       setConfig(DEFAULT_CONFIG);
     }
+  };
+
+  const handleUpdateReturnStatus = async (requestId: string, status: ReturnRequest['status']) => {
+    // Basic local state update for Returns
+    setReturns(prev => prev.map(r => r.id === requestId ? { ...r, status } : r));
+  };
+
+  const handleUpdateAdStatus = (id: string, status: AdCampaign['status']) => {
+    setAdsData(prev => prev.map(ad => ad.id === id ? { ...ad, status } : ad));
+  };
+
+  const handleAddCombo = (comboData: Omit<Combo, 'id'>) => {
+    const newCombo: Combo = {
+      ...comboData,
+      id: `CB-${Date.now()}`
+    };
+    setCombos(prev => [newCombo, ...prev]);
+  };
+
+  const handleDeleteCombo = (id: string) => {
+    setCombos(prev => prev.filter(c => c.id !== id));
+  };
+
+  const handleToggleComboStatus = (id: string) => {
+    setCombos(prev => prev.map(c => c.id === id ? { ...c, isActive: !c.isActive } : c));
+  };
+
+  const handleAddSupplier = (supplierData: Omit<Supplier, 'id'>) => {
+    const newSupplier: Supplier = {
+      ...supplierData,
+      id: `SUP-${Date.now()}`
+    };
+    setSuppliers(prev => [newSupplier, ...prev]);
+  };
+
+  const handleDeleteSupplier = (id: string) => {
+    setSuppliers(prev => prev.filter(s => s.id !== id));
+  };
+
+  const handleToggleSupplierStatus = (id: string) => {
+    setSuppliers(prev => prev.map(s => s.id === id ? { ...s, isActive: !s.isActive } : s));
+  };
+
+  const handleCreateAd = (adData: Omit<AdCampaign, 'id'>) => {
+    const newAd: AdCampaign = {
+      ...adData,
+      id: `AD-${Date.now()}`
+    };
+    setAdsData(prev => [newAd, ...prev]);
   };
 
   return (
@@ -618,6 +772,7 @@ export default function App() {
         config={config}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
+        orders={orders}
       />
 
       {/* Main Content Area Layout Container */}
@@ -630,13 +785,16 @@ export default function App() {
           setGlobalSearch={(search) => {
             setGlobalSearch(search);
             // If user types into search, direct them into the specific Products tab for immediate visual tracking!
-            if (currentTab !== 'products' && currentTab !== 'pos') {
+            if (currentTab !== 'products' && currentTab !== 'pos' && currentTab !== 'sales') {
               setCurrentTab('products');
             }
           }}
           user={user}
           onLogin={handleGoogleLogin}
           onLogout={handleLogout}
+          products={products}
+          orders={orders}
+          setCurrentTab={setCurrentTab}
         />
 
         {/* Dynamic active viewport tabs */}
@@ -661,6 +819,13 @@ export default function App() {
             />
           )}
 
+          {currentTab === 'sales-return' && (
+            <POSReturn
+              products={products}
+              customers={customers}
+            />
+          )}
+
           {(currentTab === 'orders' || currentTab === 'orders-group') && (
             <Orders
               orders={orders}
@@ -682,6 +847,7 @@ export default function App() {
           {currentTab === 'customers' && (
             <Customers
               customers={customers}
+              orders={orders}
               config={config}
               onAddCustomer={handleAddCustomer}
               onDeleteCustomer={handleDeleteCustomer}
@@ -702,11 +868,105 @@ export default function App() {
               config={config}
               onUpdateConfig={handleUpdateConfig}
               onResetDatabase={handleResetDatabase}
+              products={products}
+              customers={customers}
+              orders={orders}
             />
           )}
 
-          {/* Coming Soon Placeholders for new tabs */}
-          {['sales-return', 'livestream', 'returns', 'invoices', 'call-appointments', 'promotions', 'combos', 'suppliers', 'reconciliation', 'income-expense', 'debt', 'transactions', 'ads'].includes(currentTab) && (
+          {currentTab === 'reconciliation' && (
+            <Reconciliation
+              orders={orders}
+              onUpdateOrderStatus={handleUpdateOrderStatus}
+            />
+          )}
+
+          {currentTab === 'returns' && (
+            <Returns
+              returns={returns}
+              config={config}
+              onUpdateReturnStatus={handleUpdateReturnStatus}
+            />
+          )}
+
+          {currentTab === 'promotions' && (
+            <Promotions />
+          )}
+
+          {currentTab === 'ads' && (
+            <Ads 
+              ads={adsData} 
+              config={config} 
+              onUpdateAdStatus={handleUpdateAdStatus} 
+              onAddAd={handleCreateAd}
+            />
+          )}
+
+          {currentTab === 'combos' && (
+            <Combos 
+              combos={combos} 
+              products={products} 
+              config={config} 
+              onAddCombo={handleAddCombo}
+              onDeleteCombo={handleDeleteCombo}
+              onToggleStatus={handleToggleComboStatus}
+            />
+          )}
+
+          {currentTab === 'suppliers' && (
+            <Suppliers 
+              suppliers={suppliers} 
+              config={config} 
+              onAddSupplier={handleAddSupplier}
+              onDeleteSupplier={handleDeleteSupplier}
+              onToggleStatus={handleToggleSupplierStatus}
+            />
+          )}
+
+          {currentTab === 'livestream' && (
+            <Livestream 
+              sessions={livestreams} 
+              config={config} 
+            />
+          )}
+
+          {currentTab === 'invoices' && (
+            <Invoices 
+              invoices={invoices} 
+              config={config} 
+            />
+          )}
+
+          {currentTab === 'income-expense' && (
+            <CashFlow 
+              cashflows={cashflows} 
+              config={config} 
+            />
+          )}
+
+          {currentTab === 'debt' && (
+            <DebtManagement 
+              debts={debts} 
+              config={config} 
+            />
+          )}
+
+          {currentTab === 'transactions' && (
+            <Transactions 
+              transactions={transactions} 
+              config={config} 
+            />
+          )}
+
+          {currentTab === 'call-appointments' && (
+            <Appointments 
+              appointments={appointments} 
+              config={config} 
+            />
+          )}
+
+          {/* Coming Soon Placeholders for remaining tabs */}
+          {['not_implemented_yet'].includes(currentTab) && (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
               <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
                 <span className="text-2xl">⏳</span>

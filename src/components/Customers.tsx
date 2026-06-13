@@ -20,10 +20,11 @@ import {
   ShoppingBag,
   Grid
 } from 'lucide-react';
-import { Customer, ShopConfig } from '../types';
+import { Customer, Order, ShopConfig } from '../types';
 
 interface CustomersProps {
   customers: Customer[];
+  orders: Order[];
   config: ShopConfig;
   onAddCustomer: (customer: Customer) => void;
   onDeleteCustomer: (customerId: string) => void;
@@ -31,6 +32,7 @@ interface CustomersProps {
 
 export default function Customers({
   customers,
+  orders,
   config,
   onAddCustomer,
   onDeleteCustomer
@@ -333,6 +335,29 @@ export default function Customers({
                 <p className="text-blue-700 leading-relaxed text-[11px]">
                   Khách hàng ưa thích sử dụng phương pháp <strong>Chuyển khoản</strong> thanh toán và thường ghé mua s sắm vào ngày cuối tuần.
                 </p>
+              </div>
+
+              {/* Past orders list */}
+              <div className="pt-2">
+                <h4 className="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2"><ShoppingBag size={14} /> Lịch sử mua hàng</h4>
+                <div className="space-y-2 max-h-60 overflow-y-auto pr-1 scrollbar-thin">
+                  {orders.filter(o => o.customer?.id === activeCustomer.id).length === 0 ? (
+                    <div className="text-center text-slate-400 text-xs py-4">Chưa có giao dịch nào</div>
+                  ) : (
+                    orders.filter(o => o.customer?.id === activeCustomer.id).map(o => (
+                      <div key={o.id} className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-xs flex justify-between items-center hover:shadow-xs transition">
+                        <div>
+                          <span className="font-bold text-blue-600 cursor-pointer">{o.id}</span>
+                          <span className="text-slate-400 block mt-1">{new Date(o.createdAt).toLocaleDateString('vi-VN')}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-bold text-slate-800 block">{formatCurrency(o.finalAmount)}</span>
+                          <span className="text-slate-400 mt-1 block">{o.items.reduce((s, it) => s + it.quantity, 0)} Món</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           ) : (

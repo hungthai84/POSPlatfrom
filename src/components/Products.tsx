@@ -248,9 +248,26 @@ export default function Products({
             <Printer size={16} />
           </button>
           
-          {/* Export & Import excel catalog placeholder */}
+          {/* Export catalog */}
           <button
-            onClick={() => alert('Bắt đầu xử lý nạp danh mục hàng xuất khẩu...')}
+            onClick={() => {
+              const headers = ['Mã SP/SKU', 'Tên sản phẩm', 'Danh mục', 'Giá nhập', 'Giá bán', 'Tổng tồn', 'Có thể bán', 'Trạng thái'];
+              let data: any[][] = [];
+              if (activeTab === 'products') {
+                data = processedProducts.map(p => [p.sku, p.name, p.category, '-', '-', p.totalImport, p.totalAvailable, p.isActive ? 'Đang bán' : 'Ngừng bán']);
+              } else {
+                data = flatVariants.map(v => [v.variant.sku, v.variant.name, v.product.category, v.variant.importPrice, v.variant.price, v.variant.stock, v.variant.available, v.product.isActive ? 'Đang bán' : 'Ngừng bán']);
+              }
+              const csvContent = [headers, ...data].map(e => e.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",")).join("\n");
+              const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.setAttribute("href", url);
+              link.setAttribute("download", activeTab === 'products' ? "danh_sach_san_pham.csv" : "danh_sach_mau_ma.csv");
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
             className="flex items-center gap-1.5 p-2 px-3 border border-slate-200 rounded-lg text-slate-705 font-bold hover:bg-slate-50 text-xs bg-white transition"
           >
             <FileDown size={14} className="text-blue-650" />
@@ -349,7 +366,7 @@ export default function Products({
                     return (
                       <React.Fragment key={prod.id}>
                         {/* Parent product summary row */}
-                        <tr className="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150">
+                        <tr className="border-b border-slate-50 hover:bg-white relative z-0 hover:z-10 hover:scale-[1.01] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all duration-200">
                           {/* Expanded icon toggler */}
                           <td className="py-3.5 px-4 text-center">
                             <button
@@ -495,9 +512,20 @@ export default function Products({
                                         </td>
                                         <td className="py-2 px-3 text-right font-bold text-slate-800">{v.stock}</td>
                                         <td className="py-2 px-3 text-right">
-                                          <strong className={v.available > 0 ? 'text-emerald-600 font-extrabold' : 'text-red-500'}>
-                                            {v.available}
-                                          </strong>
+                                          <div className="flex flex-col items-end">
+                                            <strong className={v.available > 0 ? 'text-emerald-600 font-extrabold' : 'text-red-500'}>
+                                              {v.available}
+                                            </strong>
+                                            {v.available <= (config.lowStockThreshold ?? 5) && (
+                                              <span className={`text-[8px] px-1 py-0.5 rounded font-black mt-0.5 whitespace-nowrap uppercase tracking-tighter ${
+                                                v.available === 0 
+                                                  ? 'bg-red-50 text-red-650 border border-red-100' 
+                                                  : 'bg-amber-55 text-amber-800 border border-amber-100'
+                                              }`}>
+                                                {v.available === 0 ? 'Hết hàng 🚨' : 'Sắp hết ⚠️'}
+                                              </span>
+                                            )}
+                                          </div>
                                         </td>
                                         <td className="py-2 px-3 text-right text-slate-500">{v.shipping}</td>
                                       </tr>
@@ -541,7 +569,7 @@ export default function Products({
                   </tr>
                 ) : (
                   flatVariants.map(({ product, variant }) => (
-                    <tr key={variant.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition duration-100">
+                    <tr key={variant.id} className="border-b border-slate-50 hover:bg-white relative z-0 hover:z-10 hover:scale-[1.01] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all duration-200">
                       <td className="py-3.5 px-4 font-mono font-bold text-slate-800">{variant.sku}</td>
                       <td className="py-3.5 px-4">
                         <img
@@ -561,9 +589,20 @@ export default function Products({
                       </td>
                       <td className="py-3.5 px-4 text-right font-semibold text-slate-600">{variant.stock}</td>
                       <td className="py-3.5 px-4 text-right">
-                        <strong className={variant.available > 0 ? 'text-emerald-600' : 'text-red-500'}>
-                          {variant.available}
-                        </strong>
+                        <div className="flex flex-col items-end">
+                          <strong className={variant.available > 0 ? 'text-emerald-600' : 'text-red-500'}>
+                            {variant.available}
+                          </strong>
+                          {variant.available <= (config.lowStockThreshold ?? 5) && (
+                            <span className={`text-[8px] px-1 py-0.5 rounded font-black mt-0.5 whitespace-nowrap uppercase tracking-tighter ${
+                              variant.available === 0 
+                                ? 'bg-red-50 text-red-650 border border-red-100' 
+                                : 'bg-amber-100 text-amber-700 border border-amber-100'
+                            }`}>
+                              {variant.available === 0 ? 'Hết hàng 🚨' : 'Sắp hết ⚠️'}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="py-3.5 px-4 text-right text-slate-400">{variant.shipping}</td>
                     </tr>
