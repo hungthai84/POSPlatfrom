@@ -86,7 +86,7 @@
     },
     "/config/shop": {
       "schema": "ShopConfig",
-      "description": "Single document holding general configurations for Lark POS"
+      "description": "Single document holding general configurations for Power Service POS"
     }
   }
 }

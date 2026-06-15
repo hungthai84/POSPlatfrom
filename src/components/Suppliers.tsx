@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from "react";
 import {
   Plus,
   Search,
@@ -12,48 +12,60 @@ import {
   CheckCircle2,
   XCircle,
   Hash,
-  Wallet
-} from 'lucide-react';
-import { Supplier, ShopConfig } from '../types';
+  Wallet,
+} from "lucide-react";
+import { Supplier, ShopConfig } from "../types";
 
 interface SuppliersProps {
   suppliers: Supplier[];
   config: ShopConfig;
-  onAddSupplier?: (supplier: Omit<Supplier, 'id'>) => void;
+  onAddSupplier?: (supplier: Omit<Supplier, "id">) => void;
   onDeleteSupplier?: (id: string) => void;
   onToggleStatus?: (id: string) => void;
 }
 
-export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSupplier, onToggleStatus }: SuppliersProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+export default function Suppliers({
+  suppliers,
+  config,
+  onAddSupplier,
+  onDeleteSupplier,
+  onToggleStatus,
+}: SuppliersProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // New Supplier State
-  const [newSupplier, setNewSupplier] = useState<Omit<Supplier, 'id' | 'createdAt'>>({
-    name: '',
-    code: '',
-    phone: '',
-    email: '',
-    address: '',
-    taxCode: '',
-    category: 'Tổng hợp',
+  const [newSupplier, setNewSupplier] = useState<
+    Omit<Supplier, "id" | "createdAt">
+  >({
+    name: "",
+    code: "",
+    phone: "",
+    email: "",
+    address: "",
+    taxCode: "",
+    category: "Tổng hợp",
     debt: 0,
     isActive: true,
-    notes: ''
+    notes: "",
   });
 
   const formatCurrency = (val: number) => {
-    return val.toLocaleString('vi-VN') + ` ${config.currency}`;
+    return val.toLocaleString("vi-VN") + ` ${config.currency}`;
   };
 
   const filteredSuppliers = useMemo(() => {
-    return suppliers.filter(s => {
-      const matchSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          s.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          s.phone.includes(searchTerm);
-      const matchStatus = statusFilter === 'all' || 
-                          (statusFilter === 'active' ? s.isActive : !s.isActive);
+    return suppliers.filter((s) => {
+      const matchSearch =
+        s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.phone.includes(searchTerm);
+      const matchStatus =
+        statusFilter === "all" ||
+        (statusFilter === "active" ? s.isActive : !s.isActive);
       return matchSearch && matchStatus;
     });
   }, [suppliers, searchTerm, statusFilter]);
@@ -62,20 +74,20 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
     if (!newSupplier.name || !newSupplier.phone) return;
     onAddSupplier?.({
       ...newSupplier,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     });
     setIsModalOpen(false);
     setNewSupplier({
-      name: '',
-      code: '',
-      phone: '',
-      email: '',
-      address: '',
-      taxCode: '',
-      category: 'Tổng hợp',
+      name: "",
+      code: "",
+      phone: "",
+      email: "",
+      address: "",
+      taxCode: "",
+      category: "Tổng hợp",
       debt: 0,
       isActive: true,
-      notes: ''
+      notes: "",
     });
   };
 
@@ -83,12 +95,16 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
     <div className="p-6 space-y-6 bg-slate-50 min-h-[calc(100vh-4rem)] select-none">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="space-y-0.5">
-          <h2 className="text-lg font-extrabold text-slate-800 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500">Quản Lý Nhà Cung Cấp</h2>
-          <p className="text-xs text-slate-500">Quản lý thông tin liên hệ và công nợ với các đối tác nhập hàng.</p>
+          <h2 className="text-[20px] font-extrabold text-slate-800 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500">
+            Quản Lý Nhà Cung Cấp
+          </h2>
+          <p className="text-[14px] text-slate-500">
+            Quản lý thông tin liên hệ và công nợ với các đối tác nhập hàng.
+          </p>
         </div>
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-2xs transition"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[14px] px-4 py-2.5 rounded-lg shadow-2xs transition"
         >
           <Plus size={14} />
           <span>Thêm Nhà Cung Cấp</span>
@@ -102,8 +118,12 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
             <Building2 size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Tổng số NCC</p>
-            <p className="text-lg font-black text-slate-800">{suppliers.length}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase">
+              Tổng số NCC
+            </p>
+            <p className="text-[20px] font-black text-slate-800">
+              {suppliers.length}
+            </p>
           </div>
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/60 shadow-3xs flex items-center gap-4">
@@ -111,8 +131,12 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
             <CheckCircle2 size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Đang hợp tác</p>
-            <p className="text-lg font-black text-slate-800">{suppliers.filter(s => s.isActive).length}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase">
+              Đang hợp tác
+            </p>
+            <p className="text-[20px] font-black text-slate-800">
+              {suppliers.filter((s) => s.isActive).length}
+            </p>
           </div>
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/60 shadow-3xs flex items-center gap-4">
@@ -120,8 +144,12 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
             <Wallet size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Tổng nợ NCC</p>
-            <p className="text-lg font-black text-red-600">{formatCurrency(suppliers.reduce((sum, s) => sum + s.debt, 0))}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase">
+              Tổng nợ NCC
+            </p>
+            <p className="text-[20px] font-black text-red-600">
+              {formatCurrency(suppliers.reduce((sum, s) => sum + s.debt, 0))}
+            </p>
           </div>
         </div>
       </div>
@@ -134,15 +162,18 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
             placeholder="Tìm theo tên, mã NCC, số điện thoại..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-xs focus:outline-none focus:border-blue-500 font-medium transition"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-[14px] focus:outline-none focus:border-blue-500 font-medium transition"
           />
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search
+            size={14}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+          />
         </div>
 
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as any)}
-          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 font-bold focus:outline-none focus:border-blue-500"
+          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[14px] text-slate-700 font-bold focus:outline-none focus:border-blue-500"
         >
           <option value="all">Tất cả trạng thái</option>
           <option value="active">Đang kích hoạt</option>
@@ -156,36 +187,58 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-5 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Nhà Cung Cấp</th>
-                <th className="px-5 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Liên Hệ</th>
-                <th className="px-5 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Danh Mục</th>
-                <th className="px-5 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Công Nợ</th>
-                <th className="px-5 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none text-center">Trạng Thái</th>
-                <th className="px-5 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none text-right">Thao Tác</th>
+                <th className="px-5 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  Nhà Cung Cấp
+                </th>
+                <th className="px-5 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  Liên Hệ
+                </th>
+                <th className="px-5 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  Danh Mục
+                </th>
+                <th className="px-5 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  Công Nợ
+                </th>
+                <th className="px-5 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none text-center">
+                  Trạng Thái
+                </th>
+                <th className="px-5 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none text-right">
+                  Thao Tác
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filteredSuppliers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-5 py-20 text-center">
-                    <Building2 size={40} className="mx-auto text-slate-200 mb-2" />
-                    <p className="text-sm font-bold text-slate-400">Không tìm thấy nhà cung cấp nào</p>
+                    <Building2
+                      size={40}
+                      className="mx-auto text-slate-200 mb-2"
+                    />
+                    <p className="text-[16px] font-bold text-slate-400">
+                      Không tìm thấy nhà cung cấp nào
+                    </p>
                   </td>
                 </tr>
               ) : (
-                filteredSuppliers.map(s => (
-                  <tr key={s.id} className="group hover:bg-slate-50/50 transition">
+                filteredSuppliers.map((s) => (
+                  <tr
+                    key={s.id}
+                    className="group hover:bg-slate-50/50 transition"
+                  >
                     <td className="px-5 py-4">
                       <div className="flex flex-col gap-1">
-                        <span className="text-sm font-extrabold text-slate-800">{s.name}</span>
-                        <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-400 uppercase">
+                        <span className="text-[16px] font-extrabold text-slate-800">
+                          {s.name}
+                        </span>
+                        <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 uppercase">
                           <Hash size={10} />
                           <span>{s.code}</span>
                         </div>
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="flex flex-col gap-1 text-xs text-slate-600 font-medium tracking-tight">
+                      <div className="flex flex-col gap-1 text-[14px] text-slate-600 font-medium tracking-tight">
                         <div className="flex items-center gap-2">
                           <Phone size={10} className="text-slate-400" />
                           <span>{s.phone}</span>
@@ -193,33 +246,41 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
                         {s.email && (
                           <div className="flex items-center gap-2">
                             <Mail size={10} className="text-slate-400" />
-                            <span className="truncate max-w-[150px]">{s.email}</span>
+                            <span className="truncate max-w-[150px]">
+                              {s.email}
+                            </span>
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded uppercase tracking-tighter">
+                      <span className="text-[14px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded uppercase tracking-tighter">
                         {s.category}
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className={`text-sm font-black ${s.debt > 0 ? 'text-red-500' : 'text-slate-400'}`}>
+                      <span
+                        className={`text-[16px] font-black ${s.debt > 0 ? "text-red-500" : "text-slate-400"}`}
+                      >
                         {formatCurrency(s.debt)}
                       </span>
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex justify-center">
-                        <button 
+                        <button
                           onClick={() => onToggleStatus?.(s.id)}
-                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black transition ${
-                            s.isActive 
-                              ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' 
-                              : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black transition ${
+                            s.isActive
+                              ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                              : "bg-slate-100 text-slate-400 hover:bg-slate-200"
                           }`}
                         >
-                          {s.isActive ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
-                          <span>{s.isActive ? 'HOẠT ĐỘNG' : 'TẠM DỪNG'}</span>
+                          {s.isActive ? (
+                            <CheckCircle2 size={12} />
+                          ) : (
+                            <XCircle size={12} />
+                          )}
+                          <span>{s.isActive ? "HOẠT ĐỘNG" : "TẠM DỪNG"}</span>
                         </button>
                       </div>
                     </td>
@@ -228,7 +289,7 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
                         <button className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">
                           <ChevronRight size={16} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => onDeleteSupplier?.(s.id)}
                           className="p-1.5 bg-red-50 text-red-400 rounded-lg hover:bg-red-100 transition"
                         >
@@ -253,50 +314,78 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
                 <Building2 size={20} className="text-blue-600" />
                 Thêm Nhà Cung Cấp Mới
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition"
+              >
                 <XCircle size={24} />
               </button>
             </div>
-            
+
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tên Nhà Cung Cấp <span className="text-red-500">*</span></label>
-                  <input 
-                    type="text" 
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Tên Nhà Cung Cấp <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
                     value={newSupplier.name}
-                    onChange={(e) => setNewSupplier({...newSupplier, name: e.target.value})}
+                    onChange={(e) =>
+                      setNewSupplier({ ...newSupplier, name: e.target.value })
+                    }
                     placeholder="VD: Xưởng may ABC"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 font-medium transition"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[16px] focus:outline-none focus:border-blue-500 font-medium transition"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mã Nhà Cung Cấp</label>
-                  <input 
-                    type="text" 
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Mã Nhà Cung Cấp
+                  </label>
+                  <input
+                    type="text"
                     value={newSupplier.code}
-                    onChange={(e) => setNewSupplier({...newSupplier, code: e.target.value.toUpperCase()})}
+                    onChange={(e) =>
+                      setNewSupplier({
+                        ...newSupplier,
+                        code: e.target.value.toUpperCase(),
+                      })
+                    }
                     placeholder="NCC-XXXX"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 font-mono font-bold transition"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[16px] focus:outline-none focus:border-blue-500 font-mono font-bold transition"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Điện thoại <span className="text-red-500">*</span></label>
-                    <input 
-                      type="text" 
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      Điện thoại <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
                       value={newSupplier.phone}
-                      onChange={(e) => setNewSupplier({...newSupplier, phone: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 font-bold transition"
+                      onChange={(e) =>
+                        setNewSupplier({
+                          ...newSupplier,
+                          phone: e.target.value,
+                        })
+                      }
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[16px] focus:outline-none focus:border-blue-500 font-bold transition"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mã số thuế</label>
-                    <input 
-                      type="text" 
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      Mã số thuế
+                    </label>
+                    <input
+                      type="text"
                       value={newSupplier.taxCode}
-                      onChange={(e) => setNewSupplier({...newSupplier, taxCode: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition"
+                      onChange={(e) =>
+                        setNewSupplier({
+                          ...newSupplier,
+                          taxCode: e.target.value,
+                        })
+                      }
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[16px] focus:outline-none focus:border-blue-500 transition"
                     />
                   </div>
                 </div>
@@ -304,47 +393,62 @@ export default function Suppliers({ suppliers, config, onAddSupplier, onDeleteSu
 
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email liên hệ</label>
-                  <input 
-                    type="email" 
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Email liên hệ
+                  </label>
+                  <input
+                    type="email"
                     value={newSupplier.email}
-                    onChange={(e) => setNewSupplier({...newSupplier, email: e.target.value})}
+                    onChange={(e) =>
+                      setNewSupplier({ ...newSupplier, email: e.target.value })
+                    }
                     placeholder="example@supplier.com"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[16px] focus:outline-none focus:border-blue-500 transition"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Địa chỉ</label>
-                  <input 
-                    type="text" 
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Địa chỉ
+                  </label>
+                  <input
+                    type="text"
                     value={newSupplier.address}
-                    onChange={(e) => setNewSupplier({...newSupplier, address: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition"
+                    onChange={(e) =>
+                      setNewSupplier({
+                        ...newSupplier,
+                        address: e.target.value,
+                      })
+                    }
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[16px] focus:outline-none focus:border-blue-500 transition"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ghi chú</label>
-                  <textarea 
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Ghi chú
+                  </label>
+                  <textarea
                     rows={3}
                     value={newSupplier.notes}
-                    onChange={(e) => setNewSupplier({...newSupplier, notes: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition resize-none"
+                    onChange={(e) =>
+                      setNewSupplier({ ...newSupplier, notes: e.target.value })
+                    }
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[16px] focus:outline-none focus:border-blue-500 transition resize-none"
                   />
                 </div>
               </div>
             </div>
 
             <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-4">
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
-                className="flex-1 px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold text-xs rounded-2xl hover:bg-slate-100 transition shadow-xs"
+                className="flex-1 px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold text-[14px] rounded-2xl hover:bg-slate-100 transition shadow-xs"
               >
                 Hủy bỏ
               </button>
-              <button 
+              <button
                 onClick={handleCreateSupplier}
                 disabled={!newSupplier.name || !newSupplier.phone}
-                className="flex-1 px-6 py-3 bg-blue-600 text-white font-bold text-xs rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200 disabled:opacity-50 disabled:shadow-none"
+                className="flex-1 px-6 py-3 bg-blue-600 text-white font-bold text-[14px] rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200 disabled:opacity-50 disabled:shadow-none"
               >
                 Lưu Nhà Cung Cấp
               </button>

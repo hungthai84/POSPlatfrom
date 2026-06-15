@@ -3,7 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lark POS - Hệ Thống Quản Lý Bán Hàng Chuyên Nghiệp</title>
+    <title>Power Service POS Platfrom</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/WW0K15Xz/Logo-mau-xanh-x-m-CV-Nguyen-H-ng-Th-i.png" />
+    <script>
+      (function() {
+        try {
+          var currentFetch = window.fetch || globalThis.fetch;
+          
+          function getFetch() {
+            return currentFetch;
+          }
+          function setFetch(val) {
+            currentFetch = val;
+          }
+
+          // Define getter/setter on window
+          try {
+            Object.defineProperty(window, 'fetch', {
+              get: getFetch,
+              set: setFetch,
+              configurable: true,
+              enumerable: true
+            });
+          } catch (e1) {
+            try {
+              Object.defineProperty(Window.prototype, 'fetch', {
+                get: getFetch,
+                set: setFetch,
+                configurable: true,
+                enumerable: true
+              });
+            } catch (e2) {
+              try {
+                Object.defineProperty(globalThis, 'fetch', {
+                  get: getFetch,
+                  set: setFetch,
+                  configurable: true,
+                  enumerable: true
+                });
+              } catch (e3) {
+                console.warn('Unable to define fetch setter:', e3);
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Fetch patch system exception:', e);
+        }
+      })();
+    </script>
     <script src="https://apis.google.com/js/api.js"></script>
   </head>
   <body>

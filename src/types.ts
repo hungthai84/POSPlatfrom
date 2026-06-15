@@ -37,7 +37,7 @@ export interface Customer {
   phone: string; // Số điện thoại
   email?: string;
   address?: string;
-  type: 'regular' | 'vip' | 'wholesale'; // Loại khách hàng
+  type: "regular" | "vip" | "wholesale"; // Loại khách hàng
   totalSpent: number; // Tổng chi tiêu
   orderCount: number; // Số đơn hàng
   createdAt: string;
@@ -69,8 +69,8 @@ export interface Order {
   surcharge?: number; // Phụ thu
   tax: number; // Thuế (VAT)
   finalAmount: number; // Tổng thanh toán
-  paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'e_wallet'; // Phương thức thanh toán
-  status: 'pending' | 'processing' | 'completed' | 'canceled'; // Trạng thái đơn hàng
+  paymentMethod: "cash" | "card" | "bank_transfer" | "e_wallet"; // Phương thức thanh toán
+  status: "pending" | "processing" | "completed" | "canceled"; // Trạng thái đơn hàng
   createdAt: string;
   notes?: string;
   internalNotes?: string;
@@ -102,7 +102,7 @@ export interface ReturnRequest {
   items: OrderItem[];
   refundAmount: number;
   reason: string;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
+  status: "pending" | "approved" | "rejected" | "completed";
   createdAt: string;
   notes?: string;
 }
@@ -112,7 +112,7 @@ export interface Promotion {
   code: string; // e.g. "LARK2026"
   name: string; // Tên chương trình
   description?: string; // Chi tiết điều kiện
-  type: 'percentage' | 'fixed_amount' | 'buy_x_get_y' | 'free_shipping';
+  type: "percentage" | "fixed_amount" | "buy_x_get_y" | "free_shipping";
   value: number; // e.g., 10 for 10% or 50000 for 50k
   maxDiscount?: number; // Giới hạn giảm tối đa
   minOrderValue: number; // Đơn hàng tối thiểu
@@ -121,14 +121,14 @@ export interface Promotion {
   usageLimit?: number; // Giới hạn dùng
   usageCount: number; // Đã dùng
   isActive: boolean; // Trạng thái kích hoạt
-  targetCustomerType?: 'all' | 'regular' | 'vip' | 'wholesale';
+  targetCustomerType?: "all" | "regular" | "vip" | "wholesale";
 }
 
 export interface AdCampaign {
   id: string;
   name: string;
-  platform: 'facebook' | 'google' | 'tiktok';
-  status: 'active' | 'paused' | 'completed';
+  platform: "facebook" | "google" | "tiktok";
+  status: "active" | "paused" | "completed";
   budget: number;
   spent: number;
   impressions: number;
@@ -178,14 +178,14 @@ export interface LivestreamComment {
   content: string;
   timestamp: string;
   isOrder?: boolean;
-  status?: 'pending' | 'converted' | 'ignored';
+  status?: "pending" | "converted" | "ignored";
 }
 
 export interface LivestreamSession {
   id: string;
   title: string;
-  platform: 'facebook' | 'tiktok' | 'instagram';
-  status: 'live' | 'ended' | 'scheduled';
+  platform: "facebook" | "tiktok" | "instagram";
+  status: "live" | "ended" | "scheduled";
   viewers: number;
   startTime: string;
   endTime?: string;
@@ -200,14 +200,14 @@ export interface Invoice {
   orderId: string;
   customerName: string;
   amount: number;
-  status: 'paid' | 'unpaid' | 'overdue';
+  status: "paid" | "unpaid" | "overdue";
   dueDate: string;
   createdAt: string;
 }
 
 export interface CashFlow {
   id: string;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
   category: string;
   amount: number;
   note: string;
@@ -219,18 +219,18 @@ export interface Debt {
   id: string;
   targetId: string; // Customer or Supplier ID
   targetName: string;
-  type: 'customer' | 'supplier';
+  type: "customer" | "supplier";
   amount: number;
   lastUpdated: string;
-  status: 'good' | 'warning' | 'urgent';
+  status: "good" | "warning" | "urgent";
 }
 
 export interface Transaction {
   id: string;
-  type: 'payment' | 'refund' | 'adjustment';
+  type: "payment" | "refund" | "adjustment";
   amount: number;
-  method: 'cash' | 'bank' | 'card';
-  status: 'success' | 'pending' | 'failed';
+  method: "cash" | "bank" | "card";
+  status: "success" | "pending" | "failed";
   date: string;
   referenceId?: string;
 }
@@ -241,6 +241,6 @@ export interface CallAppointment {
   phone: string;
   reason: string;
   scheduledAt: string;
-  status: 'pending' | 'completed' | 'cancelled';
+  status: "pending" | "completed" | "cancelled";
   notes?: string;
 }

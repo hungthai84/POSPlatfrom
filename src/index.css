@@ -1,56 +1,105 @@
-@import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Play", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  /* Clean Minimalism Color System Definitions */
-  --color-slate-50: #fafafa;
-  --color-slate-100: #f5f5f5;
-  --color-slate-150: #eaeaea;
-  --color-slate-200: #e5e5e5;
-  --color-slate-250: #d4d4d4;
-  --color-slate-300: #d4d4d4;
-  --color-slate-400: #a3a3a3;
-  --color-slate-450: #737373;
-  --color-slate-500: #737373;
-  --color-slate-550: #525252;
-  --color-slate-600: #525252;
-  --color-slate-700: #404040;
-  --color-slate-800: #262626;
-  --color-slate-850: #171717;
-  --color-slate-900: #0a0a0a;
+  /* Force all typical card rounded values to 10px per user request */
+  --radius-lg: 10px;
+  --radius-xl: 10px;
+  --radius-2xl: 10px;
+  --radius-3xl: 10px;
 
-  /* Accent Blue & Grayscale Highlights */
-  --color-blue-50: #f4f7fb;
-  --color-blue-100: #e9f0f8;
-  --color-blue-200: #c9daf0;
-  --color-blue-500: #2563eb;
-  --color-blue-600: #1d4ed8;
-  --color-blue-700: #1e40af;
+  /* App Core Variables */
+  --color-primary: #eb7a2e;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-card: #ffffff;
+  --color-card-foreground: #171717;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
+
+  /* Clean Minimalism Color System Definitions */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-150: #e2e8f0;
+  --color-slate-200: #e2e8f0;
+  --color-slate-250: #cbd5e1;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-450: #64748b;
+  --color-slate-500: #64748b;
+  --color-slate-550: #475569;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-850: #0f172a;
+  --color-slate-900: #0f172a;
+
+  /* Accent Blue -> New Slate Gray-Blue Theme Highlights (matching Logo) */
+  --color-blue-50: #f0f4f8;
+  --color-blue-100: #d9e2ec;
+  --color-blue-200: #bcccdc;
+  --color-blue-300: #9fb3c8;
+  --color-blue-400: #829ab1;
+  --color-blue-500: #486581;
+  --color-blue-600: #2b4c6f;
+  --color-blue-700: #1b365d;
+
+  /* Accent Orange -> New Slate Gray-Blue Theme Highlights (matching Logo) */
+  --color-orange-50: #f0f4f8;
+  --color-orange-100: #d9e2ec;
+  --color-orange-200: #bcccdc;
+  --color-orange-300: #9fb3c8;
+  --color-orange-400: #829ab1;
+  --color-orange-500: #486581;
+  --color-orange-600: #2b4c6f;
+  --color-orange-700: #1b365d;
 
   /* Custom Clean Soft Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.02);
-  --shadow-md: 0 2px 8px -1px rgba(0,0,0,0.03), 0 1px 3px -1px rgba(0,0,0,0.01);
-  --shadow-2xs: 0 1px 2px 0 rgba(0,0,0,0.01);
-  --shadow-3xs: 0 1px 1px 0 rgba(0,0,0,0.01);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.03);
+  --shadow-lg:
+    0 10px 25px -3px rgba(0, 0, 0, 0.04), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
+  --shadow-2xs: 0 1px 2px 0 rgba(0, 0, 0, 0.01);
+  --shadow-3xs: 0 1px 1px 0 rgba(0, 0, 0, 0.01);
 }
 
 /* Custom premium transitions & layout animations helpers */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(12px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes zoomIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-fade-in {
@@ -96,7 +145,7 @@
 body {
   font-family: var(--font-sans);
   color: #171717;
-  background: 
+  background:
     radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0, transparent 50%),
     radial-gradient(at 50% 0%, rgba(139, 92, 246, 0.1) 0, transparent 50%),
     radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.1) 0, transparent 50%),
@@ -127,6 +176,8 @@ body {
   scrollbar-width: none;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   outline: none;
 }

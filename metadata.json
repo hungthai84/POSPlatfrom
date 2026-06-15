@@ -1,6 +1,6 @@
 {
-  "name": "Lark POS",
-  "description": "Hệ thống quản lý bán hàng POS chuyên nghiệp, đồng bộ sản phẩm, đơn hàng và kho bãi.",
+  "name": "Power Service POS Platform",
+  "description": "Hệ thống quản lý bán hàng POS chuyên nghiệp - Power Service POS Platform.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
