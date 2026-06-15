@@ -164,19 +164,12 @@ export default function Sidebar({
       label: "Bán hàng",
       icon: ShoppingCart,
       subItems: [
-        { id: "pos", label: "Bán hàng" },
+        { id: "pos", label: "Bán hàng (POS)" },
         { id: "sales-return", label: "Trả hàng" },
-      ],
-    },
-    {
-      id: "orders-group",
-      label: "Đơn hàng",
-      icon: ReceiptText,
-      subItems: [
         { id: "orders", label: "Đơn hàng" },
         { id: "livestream", label: "Livestream" },
-        { id: "returns", label: "Đổi trả" },
         { id: "invoices", label: "Hoá đơn" },
+        { id: "returns", label: "Đổi trả" },
         { id: "call-appointments", label: "Hẹn gọi" },
       ],
     },
@@ -211,7 +204,7 @@ export default function Sidebar({
   return (
     <div
       ref={sidebarRef}
-      className={`glass-panel border-r border-white/20 flex flex-col justify-between h-screen select-none shadow-2xl transition-all duration-300 whitespace-nowrap ${
+      className={`glass-panel border-r border-white/20 flex flex-col justify-between h-screen select-none shadow-2xl transition-all duration-300 whitespace-nowrap relative z-[999] ${
         collapsed ? "w-16" : "w-max"
       }`}
       id="pos-sidebar"
@@ -358,7 +351,7 @@ export default function Sidebar({
       </div>
 
       {/* Main Navigation Menu */}
-      <div className="flex-1 py-6 overflow-y-auto space-y-1.5 px-2.5 scrollbar-none flex flex-col justify-center">
+      <div className="flex-1 py-6 space-y-1.5 px-2.5 flex flex-col justify-center overflow-visible">
         <div className="space-y-1">
           {(() => {
             const unprocessedCount = orders
@@ -404,9 +397,9 @@ export default function Sidebar({
                                 {unprocessedCount}
                               </span>
                             )}
-                          <ChevronDown
+                          <ChevronRight
                             size={14}
-                            className={`transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`}
+                            className={`transition-transform duration-300 ${isDropdownOpen ? "translate-x-1" : ""}`}
                           />
                         </>
                       )}
@@ -415,13 +408,11 @@ export default function Sidebar({
                     <AnimatePresence>
                       {isDropdownOpen && (
                         <motion.div
-                          initial={{ opacity: 0, scale: 0.95, x: collapsed ? 10 : 0, y: -5 }}
-                          animate={{ opacity: 1, scale: 1, x: collapsed ? 0 : 0, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                          initial={{ opacity: 0, scale: 0.95, x: 10, y: 0 }}
+                          animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95, x: 5 }}
                           transition={{ duration: 0.15, ease: "easeOut" }}
-                          className={`absolute z-[100] bg-white border border-slate-200 shadow-xl rounded-xl py-2 min-w-[180px] ${
-                            collapsed ? "left-full ml-2 top-0" : "left-0 right-0 top-full mt-1"
-                          }`}
+                          className={`absolute z-[100] bg-white border border-slate-200 shadow-xl rounded-xl py-2 min-w-[180px] left-full ml-2 top-0`}
                         >
                           <div className="px-3 py-1.5 mb-1.5 border-b border-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                             {item.label}
